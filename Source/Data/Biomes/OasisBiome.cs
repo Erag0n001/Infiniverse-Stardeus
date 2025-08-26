@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Linq;
 using Game.Systems.Space;
-using KL.Randomness;
-using Multiplayer.Data.Chunks;
-using Multiplayer.Extensions;
-using Multiplayer.Helpers;
-using Multiplayer.Misc;
-using Multiplayer.Systems;
+using Infiniverse.Data.Chunks;
+using Infiniverse.Extensions;
+using Infiniverse.Helpers;
 using UnityEngine;
 
-namespace Multiplayer.Data.Biomes;
+namespace Infiniverse.Data.Biomes;
 
 public class OasisBiome : ChunkBiome
 {

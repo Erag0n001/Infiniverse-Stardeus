@@ -1,14 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Game;
 using Game.Data.Space;
-using Game.Systems.Space;
-using Game.UI;
-using HarmonyLib;
-using Multiplayer.Misc;
-using UnityEngine;
 
-namespace Multiplayer.Extensions;
+namespace Infiniverse.Extensions;
 
 public static class SpaceObjectExtensions
 {

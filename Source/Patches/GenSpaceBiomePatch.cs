@@ -1,8 +1,7 @@
 ﻿using Game.Systems.Space;
 using HarmonyLib;
-using Multiplayer.Misc;
 
-namespace Multiplayer.Patches;
+namespace Infiniverse.Patches;
 
 public static class GenSpaceBiomePatch
 {

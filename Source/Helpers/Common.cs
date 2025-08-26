@@ -1,6 +1,4 @@
-﻿using Game.Systems.Space;
-
-namespace Multiplayer.Helpers;
+﻿namespace Infiniverse.Helpers;
 
 public static class Common
 {

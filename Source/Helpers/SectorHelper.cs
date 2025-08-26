@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using Game;
 using Game.CodeGen;
@@ -9,14 +8,14 @@ using Game.Procgen.Space;
 using Game.Systems.Naming;
 using Game.Systems.Space;
 using HarmonyLib;
+using Infiniverse.Extensions;
+using Infiniverse.Misc;
+using Infiniverse.Systems;
 using Kl.Algos;
 using KL.Randomness;
-using Multiplayer.Extensions;
-using Multiplayer.Misc;
-using Multiplayer.Systems;
 using UnityEngine;
 
-namespace Multiplayer.Helpers;
+namespace Infiniverse.Helpers;
 
 public static class SectorHelper
 {

@@ -1,9 +1,9 @@
-﻿using System.IO;
-using System;
-using KL.Utils;
+﻿using System;
+using System.IO;
 using Game;
+using KL.Utils;
 
-namespace Multiplayer.Misc;
+namespace Infiniverse.Misc;
 
 public static class Printer
 {

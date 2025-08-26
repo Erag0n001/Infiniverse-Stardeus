@@ -1,10 +1,10 @@
 ﻿using Game;
 using Game.Systems.Space;
+using Infiniverse.Extensions;
 using KL.Console;
-using Multiplayer.Extensions;
 using UnityEngine;
 
-namespace Multiplayer.Commands;
+namespace Infiniverse.Commands;
 
 public class ConsoleCommandRemoveRegion : ConsoleCommand
 {

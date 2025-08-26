@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Game;
 using Game.CodeGen;
@@ -10,15 +9,15 @@ using Game.Data.Space;
 using Game.Procgen.Space;
 using Game.Systems.Naming;
 using Game.Systems.Space;
+using Infiniverse.Data.Chunks;
+using Infiniverse.Extensions;
+using Infiniverse.Misc;
+using Infiniverse.Systems;
 using KL.Randomness;
 using KL.Utils;
-using Multiplayer.Data.Chunks;
-using Multiplayer.Extensions;
-using Multiplayer.Misc;
-using Multiplayer.Systems;
 using UnityEngine;
 
-namespace Multiplayer.Helpers;
+namespace Infiniverse.Helpers;
 
 public static class RegionHelper
 {

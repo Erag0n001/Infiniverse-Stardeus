@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using Game;
+using Infiniverse.Data.Biomes;
+using Infiniverse.Data.Chunks;
+using Infiniverse.Systems;
 using KL.Randomness;
-using Multiplayer.Data.Biomes;
-using Multiplayer.Data.Chunks;
-using Multiplayer.Misc;
-using Multiplayer.Systems;
 using UnityEngine;
 
-namespace Multiplayer.Helpers;
+namespace Infiniverse.Helpers;
 
 public static class ChunkHelper
 {

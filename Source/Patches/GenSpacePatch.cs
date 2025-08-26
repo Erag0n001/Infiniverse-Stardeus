@@ -2,9 +2,8 @@
 using System.Reflection.Emit;
 using Game.Systems.Space;
 using HarmonyLib;
-using Multiplayer.Misc;
 
-namespace Multiplayer.Patches;
+namespace Infiniverse.Patches;
 
 public static class GenSpacePatch
 {

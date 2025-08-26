@@ -1,4 +1,4 @@
-﻿namespace Multiplayer.Data;
+﻿namespace Infiniverse.Data;
 
 public enum Direction : byte
 {

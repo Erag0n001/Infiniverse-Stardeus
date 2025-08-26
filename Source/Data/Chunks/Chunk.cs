@@ -1,15 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.IO.Pipes;
 using System.Linq;
-using Game;
 using Game.Systems.Space;
+using Infiniverse.Data.Biomes;
+using Infiniverse.Helpers;
 using KL.Randomness;
-using Multiplayer.Data.Biomes;
-using Multiplayer.Helpers;
-using Multiplayer.Systems;
 using UnityEngine;
 
-namespace Multiplayer.Data.Chunks;
+namespace Infiniverse.Data.Chunks;
 
 public class Chunk(Vector2Int position)
 {

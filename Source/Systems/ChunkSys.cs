@@ -1,25 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using Game;
 using Game.Commands;
 using Game.Data;
 using Game.Systems;
-using Game.Systems.Naming;
-using Game.Systems.Space;
-using KL.Randomness;
+using Infiniverse.Data.Biomes;
+using Infiniverse.Data.Chunks;
+using Infiniverse.Helpers;
+using Infiniverse.Misc;
 using KL.Utils;
 using MessagePack;
-using Multiplayer.Data;
-using Multiplayer.Data.Biomes;
-using Multiplayer.Data.Chunks;
-using Multiplayer.Extensions;
-using Multiplayer.Helpers;
-using Multiplayer.Misc;
 using UnityEngine;
 
-namespace Multiplayer.Systems;
+namespace Infiniverse.Systems;
 
 public class ChunkSys : GameSystem, ISaveableSpecial
 {

@@ -1,10 +1,8 @@
-﻿using KL.Console;
-using Multiplayer.Helpers;
-using Multiplayer.Misc;
-using Multiplayer.Systems;
+﻿using Infiniverse.Systems;
+using KL.Console;
 using UnityEngine;
 
-namespace Multiplayer.Commands;
+namespace Infiniverse.Commands;
 
 public class ConsoleCommandSpawnRegion : ConsoleCommand
 {

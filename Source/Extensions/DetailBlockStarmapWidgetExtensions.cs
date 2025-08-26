@@ -1,11 +1,10 @@
-﻿using Game;
-using Game.Data.Space;
+﻿using Game.Data.Space;
 using Game.UI;
 using HarmonyLib;
+using Infiniverse.Misc;
 using KL.Pool;
-using Multiplayer.Misc;
 
-namespace Multiplayer.Extensions;
+namespace Infiniverse.Extensions;
 
 public static class DetailBlockStarmapWidgetExtensions
 {

@@ -4,7 +4,7 @@ using Game.Systems.Space;
 using HarmonyLib;
 using KL.Randomness;
 
-namespace Multiplayer.Extensions;
+namespace Infiniverse.Extensions;
 
 public static class GenSpaceBiomeExtensions
 {

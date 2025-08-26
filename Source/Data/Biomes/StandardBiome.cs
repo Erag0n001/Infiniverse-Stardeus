@@ -1,24 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Game;
-using Game.CodeGen;
-using Game.Constants;
-using Game.Data;
-using Game.Data.Factions;
-using Game.Data.Space;
-using Game.Procgen.Space;
-using Game.Systems.Naming;
-using Game.Systems.Space;
-using KL.Randomness;
-using KL.Utils;
-using Multiplayer.Data.Chunks;
-using Multiplayer.Extensions;
-using Multiplayer.Helpers;
-using Multiplayer.Misc;
-using Multiplayer.Systems;
+﻿using Infiniverse.Data.Chunks;
+using Infiniverse.Extensions;
+using Infiniverse.Helpers;
 using UnityEngine;
 
-namespace Multiplayer.Data.Biomes;
+namespace Infiniverse.Data.Biomes;
 
 /// <summary>
 /// This biome basically mimics vanilla, and should not be used! It's only as a last resort.

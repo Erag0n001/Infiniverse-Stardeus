@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using UnityEngine;
 
-namespace Multiplayer.Misc;
+namespace Infiniverse.Misc;
 
 public class MainThread : MonoBehaviour
 {

@@ -1,12 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using Game;
+﻿using System.Reflection;
 using Game.Systems.Space;
 using HarmonyLib;
-using Multiplayer.Commands;
-using Multiplayer.Extensions;
 
-namespace Multiplayer.Helpers;
+namespace Infiniverse.Helpers;
 
 public static class BiomeHelper
 {

@@ -1,10 +1,8 @@
 ﻿using System.Linq;
 using Game;
 using Game.Systems.Space;
-using Multiplayer.Misc;
-using UnityEngine;
 
-namespace Multiplayer.Extensions;
+namespace Infiniverse.Extensions;
 
 public static class SpaceRegionExtensions
 {

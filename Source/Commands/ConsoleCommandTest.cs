@@ -1,10 +1,10 @@
 ﻿using Game;
 using Game.Systems.Space;
+using Infiniverse.Misc;
 using KL.Console;
-using Multiplayer.Misc;
 using UnityEngine;
 
-namespace Multiplayer.Commands;
+namespace Infiniverse.Commands;
 
 public class ConsoleCommandTest : ConsoleCommand
 {

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ModConfig.UI;
-using static Multiplayer.Config.ModConfigsMultiplayer;
+﻿using ModConfig.UI;
 
-namespace Multiplayer.Config;
+namespace Infiniverse.Config;
 
 public class ModConfigsMultiplayer : ModConfigs
 {

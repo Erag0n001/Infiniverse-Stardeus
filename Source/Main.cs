@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using UnityEngine;
-using HarmonyLib;
-using System.Reflection;
-using Multiplayer.Misc;
-using Multiplayer.Config;
+﻿using HarmonyLib;
+using Infiniverse.Config;
+using Infiniverse.Misc;
 using ModConfig;
-using UnityEngine.SceneManagement;
+using UnityEngine;
 
-namespace Multiplayer;
+namespace Infiniverse;
 
 public static class Main
 {

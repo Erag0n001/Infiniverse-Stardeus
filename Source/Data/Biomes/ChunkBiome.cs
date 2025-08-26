@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using KL.Randomness;
-using MessagePack;
-using Multiplayer.Data.Chunks;
-using Multiplayer.Helpers;
+using Infiniverse.Data.Chunks;
+using Infiniverse.Helpers;
 using UnityEngine;
 
-namespace Multiplayer.Data.Biomes;
+namespace Infiniverse.Data.Biomes;
 
 public abstract class ChunkBiome
 {
