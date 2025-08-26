@@ -2,7 +2,7 @@
 
 namespace Infiniverse.Config;
 
-public class ModConfigsMultiplayer : ModConfigs
+public class ModConfigsInfiniverse : ModConfigs
 {
     public override void DoWindowContent()
     {

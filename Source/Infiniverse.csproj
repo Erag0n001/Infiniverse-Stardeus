@@ -107,8 +107,8 @@
     <Compile Include="Commands\ConsoleCommandRemoveRegion.cs" />
     <Compile Include="Commands\ConsoleCommandSpawnRegion.cs" />
     <Compile Include="Commands\ConsoleCommandTest.cs" />
-    <Compile Include="Config\ConfigDataMultiplayer.cs" />
-    <Compile Include="Config\ModConfigsMultiplayer.cs" />
+    <Compile Include="Config\ConfigDataInfiniverse.cs" />
+    <Compile Include="Config\ModConfigsInfiniverse.cs" />
     <Compile Include="Data\Biomes\ChunkBiome.cs" />
     <Compile Include="Data\Biomes\OasisBiome.cs" />
     <Compile Include="Data\Biomes\StandardBiome.cs" />

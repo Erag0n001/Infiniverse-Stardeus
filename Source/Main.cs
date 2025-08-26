@@ -9,19 +9,19 @@ namespace Infiniverse;
 public static class Main
 {
     public static Harmony harmony;
-    public static ConfigDataMultiplayer Configs;
+    public static ConfigDataInfiniverse Configs;
     [RuntimeInitializeOnLoadMethod]
     static void StaticConstructorOnStartup() 
     {
-        Configs = (ConfigDataMultiplayer)ConfigData.LoadConfig("Eragon.MMOMultiplayer");
-        Printer.Warn("Multiplayer Loaded!");
+        Configs = (ConfigDataInfiniverse)ConfigData.LoadConfig("Eragon.Infiniverse");
+        Printer.Warn("Infiniverse Loaded!");
         LoadHarmony();
         CreateUnityDispatcher();
     }
 
     static void LoadHarmony() 
     {
-        harmony = new Harmony("Eragon.Multiplayer");
+        harmony = new Harmony("Eragon.Infiniverse");
         harmony.PatchAll();
     }
 
