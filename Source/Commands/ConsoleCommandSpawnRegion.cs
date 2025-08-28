@@ -27,7 +27,7 @@ public class ConsoleCommandSpawnRegion : ConsoleCommand
 
     public override void Initialize()
     {
-        Name = "AddNewRegion";
+        Name = "SpawnChunkAt";
         HelpLine = "Creates a new chunk at the target position";
         Args =
         [

@@ -21,7 +21,7 @@ public class Chunk(Vector2Int position)
         {
             if (Random == null)
             {
-                Random = ChunkHelper.GetRngFromPosition(position);
+                Random = ChunkHelper.GetRngFromPosition(Position);
             }
             return Random;
         }
@@ -41,6 +41,6 @@ public class Chunk(Vector2Int position)
     
     public override string ToString()
     {
-        return $"Chunk|Pos:{position}|Biome:{Biome}|Regions:{Regions.Count}";
+        return $"Chunk|Pos:{Position}|Biome:{Biome}|Regions:{Regions.Count}";
     }
 }

@@ -3,7 +3,7 @@ using HarmonyLib;
 
 namespace Infiniverse.Patches;
 
-public static class GenSpaceBiomePatch
+public static class GenSpaceBiomePatches
 {
     [HarmonyPatch(typeof(GenSpaceBiome), "RemapDifficulty")]
     public static class RemapDifficultyPatch

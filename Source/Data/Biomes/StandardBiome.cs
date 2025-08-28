@@ -11,11 +11,11 @@ namespace Infiniverse.Data.Biomes;
 public class StandardBiome : ChunkBiome
 {
     public override string Id => "Standard";
-    // [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    // private static void Register()
-    // {
-    //     ChunkBiome.Register(new StandardBiome());
-    // }
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void Register()
+    {
+        ChunkBiome.Register(new StandardBiome());
+    }
 
     public override Chunk Generate(Vector2Int position)
     {
@@ -41,7 +41,7 @@ public class StandardBiome : ChunkBiome
         {
             RegionHelper.SetupLinks(region, chunk.Rng.Fork());
         }
-        
+        RegisterChunk(chunk);
         return chunk;
     }
     

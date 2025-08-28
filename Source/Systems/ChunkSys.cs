@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Game;
 using Game.Commands;
 using Game.Data;
 using Game.Systems;
@@ -8,6 +9,7 @@ using Infiniverse.Data.Biomes;
 using Infiniverse.Data.Chunks;
 using Infiniverse.Helpers;
 using Infiniverse.Misc;
+using KL.Signals;
 using KL.Utils;
 using MessagePack;
 using UnityEngine;
@@ -28,7 +30,7 @@ public class ChunkSys : GameSystem, ISaveableSpecial
     public static Dictionary<Vector2Int, Chunk> AllChunks = new Dictionary<Vector2Int, Chunk>();
     public static HashSet<int> UsedRegionNames = new HashSet<int>();
     public static ChunkSys Instance;
-
+    public static Signal1<Chunk> OnChunkGeneratedSignal = new Signal1<Chunk>("OnChunkGenerated", isSystem: true);
     public static int NextSpaceObjectId => ++ CurrentId;
 
     private const string CurrentIdSaveLabel = "CurrentIdData";
@@ -38,6 +40,8 @@ public class ChunkSys : GameSystem, ISaveableSpecial
     {
         Printer.Warn($"Initializing ChunkSys");
         Instance = this;
+        OnChunkGeneratedSignal.AddListener(OnChunkGenerated);
+        OnChunkGeneratedSignal.AddListener(FogOfWarHelper.OnChunkAdded);
     }
     
     public override void Unload()
@@ -79,7 +83,23 @@ public class ChunkSys : GameSystem, ISaveableSpecial
             Printer.Warn($"Tried to generate a chunk at {targetPos}, but it's not aligned to grid! Fixed to {chunkPos}");
         }
 
+        if (AllChunks.TryGetValue(chunkPos, out var at))
+        {
+            Printer.Error($"Tried to generate a chunk at {chunkPos}, but a chunk already exists there!");
+            return at;
+        }
+        
         return ChunkBiome.GenerateAt(chunkPos);
+    }
+
+    private void OnChunkGenerated(Chunk chunk)
+    {
+        Printer.Warn($"Generated chunk {chunk}");
+        if (A.Starmap != null)
+        {
+            A.Starmap.PrepareForRebuild("Added chunk");
+            S.Sig.RebuildStarmap.Send(parameter: true, parameter2: true, "Added chunk");
+        }
     }
     
     private void ConvertCurrentUniverseToChunks()

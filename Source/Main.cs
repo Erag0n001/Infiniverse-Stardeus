@@ -1,7 +1,13 @@
-﻿using HarmonyLib;
+﻿using System.Linq;
+using Game;
+using Game.Rendering;
+using Game.Systems;
+using HarmonyLib;
 using Infiniverse.Config;
+using Infiniverse.Helpers;
 using Infiniverse.Misc;
-using ModConfig;
+using ModdingOverhauled.AssetBundleModule;
+using ModdingOverhauled.ConfigModule;
 using UnityEngine;
 
 namespace Infiniverse;
@@ -16,7 +22,7 @@ public static class Main
         Configs = (ConfigDataInfiniverse)ConfigData.LoadConfig("Eragon.Infiniverse");
         Printer.Warn("Infiniverse Loaded!");
         LoadHarmony();
-        CreateUnityDispatcher();
+        GetShader();
     }
 
     static void LoadHarmony() 
@@ -25,9 +31,11 @@ public static class Main
         harmony.PatchAll();
     }
 
-    private static void CreateUnityDispatcher()
+    static void GetShader()
     {
-        GameObject go = new GameObject("Dispatcher");
-        go.AddComponent(typeof(MainThread));
+        foreach (var bundle in AssetCache.AssetBundles)
+        {
+            Common.FogOfWarMaterial = new Material(RenderingService.Shaders.shaders["InfiniVerse/FogShader"]);
+        }
     }
 }

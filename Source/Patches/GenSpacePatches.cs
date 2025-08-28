@@ -5,7 +5,7 @@ using HarmonyLib;
 
 namespace Infiniverse.Patches;
 
-public static class GenSpacePatch
+public static class GenSpacePatches
 {
     [HarmonyPatch(typeof(GenSpace), nameof(GenSpace.Generate))]
     public static class GeneratePatch

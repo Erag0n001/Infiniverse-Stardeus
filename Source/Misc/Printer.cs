@@ -8,26 +8,25 @@ namespace Infiniverse.Misc;
 public static class Printer
 {
     public const string Prefix = "[IU]> ";
-    private static object printLock = new object();
-    private static readonly string extension = ".log";
-    private static readonly string logPath;
+    // ReSharper disable once ChangeFieldTypeToSystemThreadingLock
+    private static readonly object PrintLock = new object();
     public static void Log(object toLog)
     {
-        lock (printLock)
+        lock (PrintLock)
         {
             D.Log(Prefix + (toLog?.ToString() ?? "null"));
         }
     }
     public static void Warn(object toLog)
     {
-        lock (printLock)
+        lock (PrintLock)
         {
             D.Warn(Prefix + (toLog?.ToString() ?? "null"));
         }
     }
     public static void Error(object toLog)
     {
-        lock (printLock)
+        lock (PrintLock)
         {
             D.Err(Prefix + (toLog?.ToString() ?? "null"));
         }

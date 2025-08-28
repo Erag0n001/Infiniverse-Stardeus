@@ -1,6 +1,8 @@
-﻿namespace Infiniverse.Config;
+﻿using ModdingOverhauled.ConfigModule;
 
-public class ConfigDataInfiniverse : ModConfig.ConfigData
+namespace Infiniverse.Config;
+
+public class ConfigDataInfiniverse : ConfigData
 {
 
 }

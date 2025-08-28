@@ -32,6 +32,7 @@ public class OasisBiome : ChunkBiome
         SectorHelper.GenerateBiomesForSector(oasisRegion, chunk.Rng.Fork());
         CreateRings(chunk, oasisRegion);
         chunk.Regions.Add(oasisRegion);
+        RegisterChunk(chunk);
         return chunk;
     }
 

@@ -1,4 +1,4 @@
-﻿using ModConfig.UI;
+﻿using ModdingOverhauled.ConfigModule.UI;
 
 namespace Infiniverse.Config;
 

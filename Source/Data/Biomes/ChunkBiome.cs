@@ -2,6 +2,7 @@
 using System.Linq;
 using Infiniverse.Data.Chunks;
 using Infiniverse.Helpers;
+using Infiniverse.Systems;
 using UnityEngine;
 
 namespace Infiniverse.Data.Biomes;
@@ -22,6 +23,11 @@ public abstract class ChunkBiome
     public Vector2Int BiomeSizeInChunks = Vector2Int.one;
 
     public abstract Chunk Generate(Vector2Int position);
+
+    protected void RegisterChunk(Chunk chunk)
+    {
+        ChunkSys.OnChunkGeneratedSignal.Send(chunk);
+    }
 
     public static Chunk GenerateAt(Vector2Int position)
     {
