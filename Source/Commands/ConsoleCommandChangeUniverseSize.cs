@@ -19,7 +19,7 @@ public class ConsoleCommandChangeUniverseSize : ConsoleCommand
 
     public override ConsoleCommandResult Execute(ConsoleCommandArguments args)
     {
-        FogOfWarHelper.UpdatePlayerNode(A.S.Universe.ObjectsById.FirstOrDefault(x => x.Value.UI != null && x.Value.SpaceEntity is SpaceRegion).Value.SpaceEntity as SpaceRegion);
+        FogOfWarSys.Instance.UpdateTextureFromPlayerMovement();
         return OK();
     }
 

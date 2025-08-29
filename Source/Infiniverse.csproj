@@ -133,10 +133,10 @@
     <Compile Include="Extensions\SpaceObjectExtensions.cs" />
     <Compile Include="Extensions\SpaceRegionExtensions.cs" />
     <Compile Include="Extensions\UIScrollNavExtensions.cs" />
+    <Compile Include="Extensions\UISpaceObjectExtensions.cs" />
     <Compile Include="Helpers\BiomeHelper.cs" />
     <Compile Include="Helpers\ChunkHelper.cs" />
     <Compile Include="Helpers\Common.cs" />
-    <Compile Include="Helpers\FogOfWarHelper.cs" />
     <Compile Include="Helpers\RegionHelper.cs" />
     <Compile Include="Helpers\SectorHelper.cs" />
     <Compile Include="Main.cs" />
@@ -148,6 +148,7 @@
     <Compile Include="Patches\UIScrollNavPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Systems\ChunkSys.cs" />
+    <Compile Include="Systems\FogOfWarSys.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

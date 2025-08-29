@@ -1,3 +1,4 @@
+using Game.Data.Space;
 using Game.Rendering;
 using Game.UI;
 using HarmonyLib;
@@ -18,7 +19,7 @@ public static class DetailBlockStarmapWidgetPatch
         [HarmonyPrefix]
         public static void Patch(DetailBlockStarmapWidget __instance, Vector2 ___centerPos)
         {
-            FogOfWarHelper.Toggle(true, __instance.Layer, __instance);
+            FogOfWarSys.Instance.Toggle(true, __instance.Layer, __instance);
             if (UIScrollNavPatches.TopLeft is null)
             {
                 var scrollView = __instance.transform.Find("Scroll View");
@@ -50,7 +51,7 @@ public static class DetailBlockStarmapWidgetPatch
         public static void Patch(DetailBlockStarmapWidget __instance)
         {
             Printer.Warn("Onclose");
-            FogOfWarHelper.Toggle(false, __instance.Layer, __instance);
+            FogOfWarSys.Instance.Toggle(false, __instance.Layer, __instance);
         }
     }
 }

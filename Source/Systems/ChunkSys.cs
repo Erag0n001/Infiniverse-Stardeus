@@ -41,7 +41,6 @@ public class ChunkSys : GameSystem, ISaveableSpecial
         Printer.Warn($"Initializing ChunkSys");
         Instance = this;
         OnChunkGeneratedSignal.AddListener(OnChunkGenerated);
-        OnChunkGeneratedSignal.AddListener(FogOfWarHelper.OnChunkAdded);
     }
     
     public override void Unload()

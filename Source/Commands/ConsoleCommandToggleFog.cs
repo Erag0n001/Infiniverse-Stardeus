@@ -16,7 +16,7 @@ public class ConsoleCommandToggleFog : ConsoleCommand
 
     public override ConsoleCommandResult Execute(ConsoleCommandArguments args)
     {
-        FogOfWarHelper.Toggle(!FogOfWarHelper.Toggled);
+        FogOfWarSys.Instance.Toggle(!FogOfWarSys.Toggled);
         return OK();
     }
 
