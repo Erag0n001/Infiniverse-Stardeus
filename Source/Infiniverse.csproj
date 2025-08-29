@@ -136,6 +136,7 @@
     <Compile Include="Helpers\BiomeHelper.cs" />
     <Compile Include="Helpers\ChunkHelper.cs" />
     <Compile Include="Helpers\Common.cs" />
+    <Compile Include="Helpers\FogOfWarHelper.cs" />
     <Compile Include="Helpers\RegionHelper.cs" />
     <Compile Include="Helpers\SectorHelper.cs" />
     <Compile Include="Main.cs" />
@@ -147,7 +148,6 @@
     <Compile Include="Patches\UIScrollNavPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Systems\ChunkSys.cs" />
-    <Compile Include="Systems\FogOfWarHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

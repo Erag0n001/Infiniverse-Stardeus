@@ -144,7 +144,7 @@ public static class RegionHelper
     }
     public static void GenerateRegionSO(SpaceRegion region)
     {
-        var spaceObject = RegionHelper.RegGen.Generate(A.S.Universe, UniverseLayer.Region, RegionHelper.RegType, region.Map.SO);
+        var spaceObject = RegGen.Generate(A.S.Universe, UniverseLayer.Region, RegType, region.Map.SO);
         spaceObject.Region = region;
         spaceObject.Location = region.Position;
         spaceObject.Size = GenUniverse.RegionSize;

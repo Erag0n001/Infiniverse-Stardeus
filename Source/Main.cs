@@ -33,9 +33,10 @@ public static class Main
 
     static void GetShader()
     {
-        foreach (var bundle in AssetCache.AssetBundles)
-        {
-            Common.FogOfWarMaterial = new Material(RenderingService.Shaders.shaders["InfiniVerse/FogShader"]);
-        }
+        const string fogShaderName = "Infiniverse/FogShader";
+        const string fogCircleName = "Infiniverse/FogCircle";
+        const string assetBundleName = "infiniverse_shaders";
+        Common.FogOfWarMaterial = new Material(RenderingService.Shaders.shaders[fogShaderName]);
+        Common.CircleMakerMaterial = new  Material(RenderingService.Shaders.shaders[fogCircleName]);
     }
 }

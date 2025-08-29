@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Game.UI;
 using HarmonyLib;
@@ -9,6 +10,8 @@ namespace Infiniverse.Patches;
 
 public static class UIScrollNavPatches
 {
+    public static RectTransform TopLeft;
+    public static RectTransform BottomRight;
     [HarmonyPatch(typeof(UIScrollNav), "OnNav")]
     public static class OnNavPatch
     {
@@ -34,10 +37,27 @@ public static class UIScrollNavPatches
         // We only want to snap if this is the Universe
         if (uiScrollNav.gameObject.transform.parent.parent.parent.gameObject.GetComponent<DetailBlockStarmapWidget>() is not null)
         {
-            Printer.Warn(target.localPosition);
-            var x = Mathf.Clamp(target.localPosition.x, Common.UniverseMinimum.x, Common.UniverseMaximum.x);
-            var y = Mathf.Clamp(target.localPosition.y, Common.UniverseMinimum.y, Common.UniverseMaximum.y);
-            target.localPosition = new Vector2(x, y);
+            Vector3 offset = new Vector3();
+            if (TopLeft.position.x > 0)
+            {
+                offset.x += TopLeft.position.x * -1;
+            }
+            if (TopLeft.position.y < 0)
+            {
+                offset.y += TopLeft.position.y * -1;
+            }
+
+            if (BottomRight.position.x < 0)
+            {
+                offset.x += BottomRight.position.x * -1;
+            }
+
+            if (BottomRight.position.y > 0)
+            {
+                offset.y += BottomRight.position.y * -1;
+            }
+            
+            target.position += offset;
         }
     }
 }
