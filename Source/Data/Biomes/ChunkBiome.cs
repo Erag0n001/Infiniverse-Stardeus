@@ -26,7 +26,7 @@ public abstract class ChunkBiome
 
     protected void RegisterChunk(Chunk chunk)
     {
-        ChunkSys.OnChunkGeneratedSignal.Send(chunk);
+        ChunkSys.Instance.OnChunkGeneratedSignal.Send(chunk);
     }
 
     public static Chunk GenerateAt(Vector2Int position)

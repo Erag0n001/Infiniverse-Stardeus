@@ -51,7 +51,7 @@ public static class ChunkHelper
             for (int y = 0; y < biome.BiomeSizeInChunks.y; y++)
             {
                 var chunkPos = position + new Vector2Int(x * Chunk.ChunkSize, y * Chunk.ChunkSize);
-                if (ChunkSys.AllChunks.ContainsKey(chunkPos))
+                if (ChunkSys.Instance.AllChunks.ContainsKey(chunkPos))
                     return false;
             }
         }

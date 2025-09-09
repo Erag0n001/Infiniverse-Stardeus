@@ -4,17 +4,19 @@ using Game.Systems.Space;
 using Infiniverse.Data.Biomes;
 using Infiniverse.Helpers;
 using KL.Randomness;
+using MessagePack;
 using UnityEngine;
 
 namespace Infiniverse.Data.Chunks;
 
+[MessagePackObject]
 public class Chunk(Vector2Int position)
 {
     public const int ChunkSize = 5;
     public List<SpaceRegion> Regions = new List<SpaceRegion>();
     public ChunkBiome Biome;
     private Rng Random;
-
+    
     public Rng Rng
     {
         get

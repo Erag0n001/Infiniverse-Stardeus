@@ -5,8 +5,10 @@ using Game;
 using Game.Commands;
 using Game.Data;
 using Game.Systems;
+using Game.Systems.Space;
 using Infiniverse.Data.Biomes;
 using Infiniverse.Data.Chunks;
+using Infiniverse.Data.Saveable;
 using Infiniverse.Helpers;
 using Infiniverse.Misc;
 using KL.Signals;
@@ -23,24 +25,27 @@ public class ChunkSys : GameSystem, ISaveableSpecial
     {
         GameSystems.Register("ChunkSys", () => new ChunkSys());
     }
+    private const string ChunksSaveLabel = "AllChunksData";
+    private const string CurrentIdSaveLabel = "CurrentIdData";
+    
+    public static ChunkSys Instance;
     
     public override string Id => "ChunkSys";
     
-    private const string ChunksSaveLabel = "AllChunksData";
-    public static Dictionary<Vector2Int, Chunk> AllChunks = new Dictionary<Vector2Int, Chunk>();
-    public static HashSet<int> UsedRegionNames = new HashSet<int>();
-    public static ChunkSys Instance;
-    public static Signal1<Chunk> OnChunkGeneratedSignal = new Signal1<Chunk>("OnChunkGenerated", isSystem: true);
-    public static int NextSpaceObjectId => ++ CurrentId;
-
-    private const string CurrentIdSaveLabel = "CurrentIdData";
-    private static int CurrentId;
+    public GenSpace GenSpace { get; private set; }
+    public Dictionary<Vector2Int, Chunk> AllChunks = new Dictionary<Vector2Int, Chunk>();
+    public HashSet<int> UsedRegionNames = new HashSet<int>();
+    public Signal1<Chunk> OnChunkGeneratedSignal = new Signal1<Chunk>("OnChunkGenerated", isSystem: true);
+    
+    public int NextSpaceObjectId => ++ CurrentId;
+    private int CurrentId;
     
     protected override void OnInitialize()
     {
         Printer.Warn($"Initializing ChunkSys");
         Instance = this;
         OnChunkGeneratedSignal.AddListener(OnChunkGenerated);
+        GenSpace = new GenSpace(S, S.Seed);
     }
     
     public override void Unload()
@@ -51,8 +56,8 @@ public class ChunkSys : GameSystem, ISaveableSpecial
 
     public void SaveSpecial(SystemsDataSpecial sd)
     {
-        sd.ModData = new Dictionary<string, byte[]>();
-        byte[] allChunksData = MessagePackSerializer.Serialize(AllChunks.Values, CmdSaveGame.MsgPackOptions);
+        Printer.Warn($"Saving {Id}");
+        byte[] allChunksData = MessagePackSerializer.Serialize(AllChunks.Values.Select(ChunkData.Serialize), CmdSaveGame.MsgPackOptions);
         sd.ModData.Add(ChunksSaveLabel, allChunksData);
         byte[] currentIdData = BitConverter.GetBytes(CurrentId);
         sd.ModData.Add(CurrentIdSaveLabel, currentIdData);
@@ -60,20 +65,29 @@ public class ChunkSys : GameSystem, ISaveableSpecial
 
     public void LoadSpecial(SystemsDataSpecial sd)
     {
-        Printer.Warn("Loading ChunkSys");
-        // ReSharper disable once CanSimplifyDictionaryLookupWithTryGetValue
-        if (sd.ModData == null || !sd.ModData.ContainsKey(ChunksSaveLabel))
+        Printer.Warn($"Loading {Id}");
+        foreach (var str in sd.ModData.Keys)
         {
-            Printer.Error($"Failed to fetch save data for the current universe, attempting to convert universe...");
+            Printer.Warn(str);
+            Printer.Warn(sd.ModData[str]);
+        }
+        if (!sd.ModData.TryGetValue(ChunksSaveLabel, out var rawChunks))
+        {
+            Printer.Warn($"Failed to fetch save data for the current universe, attempting to convert universe...");
             ConvertCurrentUniverseToChunks();
             return;
         }
         
-        AllChunks = MessagePackSerializer.Deserialize<Dictionary<Vector2Int, Chunk>>(sd.ModData[ChunksSaveLabel]);
+        var allChunks = MessagePackSerializer.Deserialize<ChunkData[]>(rawChunks, CmdSaveGame.MsgPackOptions).Select(x => x.Deserialize());
+        foreach (var chunk in allChunks)
+        {
+            AllChunks.Add(chunk.Position, chunk);
+        }
+        
         CurrentId = BitConverter.ToInt32(sd.ModData[CurrentIdSaveLabel]);
     }
 
-    public static Chunk GenerateChunkAt(Vector2Int targetPos)
+    public Chunk GenerateChunkAt(Vector2Int targetPos)
     {
         var chunkPos = targetPos;
         if (!ChunkHelper.EnsureIsChunkLocation(targetPos))
@@ -129,6 +143,7 @@ public class ChunkSys : GameSystem, ISaveableSpecial
             if (!AllChunks.TryGetValue(chunkPos, out var chunk))
             {
                 chunk = new Chunk(chunkPos);
+                chunk.Biome = ChunkBiome.AllBiomes["Standard"];
                 AllChunks.Add(chunkPos, chunk);
             }       
             chunk.Regions.Add(region);
@@ -137,7 +152,7 @@ public class ChunkSys : GameSystem, ISaveableSpecial
         Printer.Warn($"All done converting universe. Chunk count:{AllChunks.Count}");
     }
 
-    internal static void UpdateId(int id)
+    internal void UpdateId(int id)
     {
         CurrentId = id;
     }

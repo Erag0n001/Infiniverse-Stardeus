@@ -4,6 +4,7 @@ using Game.Systems.Space;
 using Infiniverse.Data.Chunks;
 using Infiniverse.Extensions;
 using Infiniverse.Helpers;
+using Infiniverse.Systems;
 using UnityEngine;
 
 namespace Infiniverse.Data.Biomes;
@@ -27,7 +28,7 @@ public class OasisBiome : ChunkBiome
         var oasisRegion = RegionHelper.CreateRegionEmpty(chunk.Middle, chunk.Rng.Fork(), false);
         oasisRegion.Biome.Difficulty = chunk.Rng.Range(0, 0.10f);
         oasisRegion.Biome.SetTemplate(RegionTemplate.Get("UnclaimedStarSystem"));
-        SectorHelper.GenerateSectorForRegion(oasisRegion);
+        SectorHelper.GenerateSectorForRegion(oasisRegion, chunk.Rng.Fork());
         BiomeHelper.BiomeGen.RemapSectorDifficulty(oasisRegion, chunk.Rng.Fork());
         SectorHelper.GenerateBiomesForSector(oasisRegion, chunk.Rng.Fork());
         CreateRings(chunk, oasisRegion);

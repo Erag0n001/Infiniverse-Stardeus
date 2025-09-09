@@ -1,7 +1,9 @@
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Linq;
 using Game;
+using Game.Commands;
 using Game.Data;
 using Game.Data.Space;
 using Game.Systems;
@@ -10,6 +12,7 @@ using Game.UI;
 using Infiniverse.Extensions;
 using Infiniverse.Helpers;
 using Infiniverse.Misc;
+using MessagePack;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,10 +20,31 @@ namespace Infiniverse.Systems;
 
 public class FogOfWarSys : GameSystem, ISaveableSpecial
 {
-    private const string VisitedRegionKey = "VisitedRegions";
-    public override string Id => "Infiniverse.Systems.FogOfWarSystem";
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void Register()
+    {
+        GameSystems.Register(ID, () => new FogOfWarSys());
+    }
+
     
-    public static bool Toggled => Instance.FogOfWarObject?.activeInHierarchy ?? false;
+    private static readonly int CircleCountProp = Shader.PropertyToID("_CircleCount");
+    private static readonly int CirclesProp = Shader.PropertyToID("_Circles");
+
+    public enum DiscoverState : byte
+    {
+        None = 0,
+        BarelyDiscovered = 1,
+        SomewhatDiscovered = 2,
+        FullyDiscovered = 3,
+        StartingArea = 4,
+        Debug = 255
+    } 
+    private const string VisitedRegionKey = "VisitedRegionsKey";
+    private const string VisitedRegionValue = "VisitedRegionsValue";
+    private const string ID = "Infiniverse.Systems.FogOfWarSystem";
+    public override string Id => ID;
+    public bool DebugRevealed = false;
+    public bool Toggled => Instance.FogOfWarObject?.activeInHierarchy ?? false;
     
     public static FogOfWarSys Instance { get; private set; }
     
@@ -28,10 +52,11 @@ public class FogOfWarSys : GameSystem, ISaveableSpecial
     private RectTransform FogOfWarRect;
     private RenderTexture Mask;
     
-    private HashSet<SpaceObject> RevealedObjects = new HashSet<SpaceObject>();
+    public Dictionary<SpaceObject, DiscoverState> DiscoveredRegions = new Dictionary<SpaceObject, DiscoverState>();
     
     protected override void OnInitialize()
     {
+        Printer.Warn($"Fog of war initializing!");
         Instance = this;
         S.Sig.HyperspaceLocationChanged.AddListener(UpdateTextureFromHyperSpaceMovement);
     }
@@ -41,40 +66,42 @@ public class FogOfWarSys : GameSystem, ISaveableSpecial
         GameObject.Destroy(FogOfWarObject);
         Instance = null;
         S.Sig.HyperspaceLocationChanged.RemoveListener(UpdateTextureFromHyperSpaceMovement);
+        DiscoveredRegions.Clear();
     }
     
     public void SaveSpecial(SystemsDataSpecial sd)
     {
-        sd.ModData = new Dictionary<string, byte[]>();
-        List<byte> data = new List<byte>();
-        foreach (var region in RevealedObjects)
-        {
-            data.AddRange(BitConverter.GetBytes(region.Id));
-        }
-        sd.ModData.Add(VisitedRegionKey, data.ToArray());
+        Printer.Warn($"Saving {Id}");
+        var rawKeys = new byte[DiscoveredRegions.Keys.Count * sizeof(int)];
+        Buffer.BlockCopy(DiscoveredRegions.Keys.Select(x => x.Id).ToArray(), 0,  rawKeys, 0,  rawKeys.Length);
+        
+        sd.ModData.Add(VisitedRegionKey, rawKeys);
+        sd.ModData.Add(VisitedRegionValue, DiscoveredRegions.Values.Select(x => (byte)x).ToArray());
     }
 
     public void LoadSpecial(SystemsDataSpecial sd)
     {
-        if (sd.ModData == null)
+        Printer.Warn($"Loading {Id}");
+        if (!sd.ModData.ContainsKey(VisitedRegionKey))
         {
-            // Added to save maybe?
-            // todo get the player object and such
+            UpdateTextureFromPlayerMovement();
             return;
         }
-        Span<byte> data = sd.ModData[VisitedRegionKey];
-        var length = data.Length - 4;
-        for (int i = 0; i < length; i += 4)
+        DiscoveredRegions = new Dictionary<SpaceObject, DiscoverState>();
+        ReadOnlySpan<byte> keys = sd.ModData[VisitedRegionKey];
+        ReadOnlySpan<byte> values = sd.ModData[VisitedRegionValue];
+        var length = keys.Length / sizeof(int);
+        for (int i = 0; i < length; i++)
         {
-            var id = BitConverter.ToInt32(data.Slice(i, 4));
-            
-            if (S.Universe.ObjectsById.TryGetValue(id, out var obj))
+            var id = BinaryPrimitives.ReadInt32LittleEndian(keys.Slice(i * sizeof(int), sizeof(int)));
+            DiscoverState state = (DiscoverState)values[i];
+            if (S.Universe.ObjectsById.TryGetValue(id, out var so))
             {
-                RevealedObjects.Add(obj);
+                DiscoveredRegions.Add(so, state);
             }
             else
             {
-                Printer.Error($"Tried to load a SpaceObject with id {id}, but it did not exist.");
+                Printer.Error($"Failed to fetch space object with id {id} in the universe post load!");
             }
         }
     }
@@ -94,62 +121,91 @@ public class FogOfWarSys : GameSystem, ISaveableSpecial
         }
         if (FogOfWarObject is not null && FogOfWarObject)
         {
-            FogOfWarObject.SetActive(value);
+            FogOfWarObject.SetActive(value && !DebugRevealed);
             return;
         }
         if (value)
         {
-            FogOfWarObject = new GameObject();
-            FogOfWarObject.name = "FogOfWar";
-            
-            var scrollView = widget.transform.Find("Scroll View");
-            var viewPort = scrollView.transform.Find("Viewport");
-            var navBallObj = viewPort.transform.Find("Content");
-            
-            FogOfWarObject.transform.SetParent(navBallObj);
-            
-            var image = FogOfWarObject.AddComponent<RawImage>();
-            image.material = Common.FogOfWarMaterial;
-
-            Mask = new RenderTexture(4000, 4000, 0, RenderTextureFormat.ARGB32);
-            
-            image.texture = Mask;
-            
-            var transform = FogOfWarObject.GetComponent<RectTransform>();
-            transform.position = Common.FogOfWarPos;
-            transform.sizeDelta = Common.FogOfWarSize;
-            FogOfWarRect = transform;
-            
-            Common.CircleMakerMaterial.SetVectorArray("_Circles", new Vector4[128]);
-            Common.CircleMakerMaterial.SetInt("_CircleCount", 128);
-            
+            CreateGameObject(widget);
+            UpdateTexture();
         }
     }
+
+    private void CreateGameObject(DetailBlockStarmapWidget widget)
+    {
+        FogOfWarObject = new GameObject();
+        FogOfWarObject.name = "FogOfWar";
+            
+        var scrollView = widget.transform.Find("Scroll View");
+        var viewPort = scrollView.transform.Find("Viewport");
+        var navBallObj = viewPort.transform.Find("Content");
+            
+        FogOfWarObject.transform.SetParent(navBallObj);
+            
+        var image = FogOfWarObject.AddComponent<RawImage>();
+        image.material = Common.FogOfWarMaterial;
+
+        Mask = new RenderTexture(4000, 4000, 0, RenderTextureFormat.ARGB32);
+            
+        image.texture = Mask;
+            
+        var transform = FogOfWarObject.GetComponent<RectTransform>();
+        transform.position = Common.FogOfWarPos;
+        transform.sizeDelta = Common.FogOfWarSize;
+        FogOfWarRect = transform;
+    }
     
-    private static UISpaceObject[] GetAllRegionsWithUIObjects()
+    public UISpaceObject[] GetAllRegionsWithUIObjects()
     {
         return A.S.Query.GetSpaceMap.Ask().Regions.Where(x => x.SO.UI is not null).Select(x => x.SO.UI).ToArray();
     }
     
-    private void UpdateTexture(List<Vector4> points)
+    public void UpdateTexture()
     {
-        if (points.Count > 128)
+        Vector4[] points = new  Vector4[128];
+        int i = 0;
+        foreach (var region in DiscoveredRegions)
         {
-            Printer.Warn($"Trying to discover too many circles at once, trimming down to 128!");
-            while (points.Count > 128)
+            try
             {
-                points.Remove(points.Last());
+                if (TryGetUvCoordinatesFromRegionOntoFog(region.Key.UI, out var uv))
+                {
+                    points[i] = new Vector4(uv.x, uv.y, GetCircleSizeForDiscoverState(region.Value), 0);
+                    i++;
+                }
+                else
+                {
+                    Printer.Error($"Failed to get texture coordinate for {region.Key} with uv pos {uv}");
+                }
             }
+            catch (Exception ex)
+            {
+                Printer.Error(ex.Message);
+            }
+        }
+        
+        var regions = GetAllRegionsWithUIObjects();
+        
+        foreach (var region in regions)
+        {
+            region.GetCanvasGroup().gameObject.SetActive(DebugRevealed);
+        }
+        
+        foreach (var region in regions.Where(x => DiscoveredRegions.ContainsKey(x.SpaceObject)))
+        {
+            region.GetCanvasGroup().gameObject.SetActive(true);
         }
         
         RenderTexture.active = Mask;
         GL.Clear(true, true, Color.clear);
         RenderTexture.active = null;
         
-        Common.CircleMakerMaterial.SetVectorArray("_Circles", points.ToArray());
-        Common.CircleMakerMaterial.SetInt("_CircleCount", points.Count);
+        Common.CircleMakerMaterial.SetVectorArray(CirclesProp, points.ToArray());
+        Common.CircleMakerMaterial.SetInt(CircleCountProp, i);
         
         Graphics.Blit(null, Mask, Common.CircleMakerMaterial);
+
+        FogOfWarObject.SetActive(!DebugRevealed);
     }
 
     public void UpdateTextureFromHyperSpaceMovement(SpaceObject _, SpaceObject to)
@@ -159,12 +215,15 @@ public class FogOfWarSys : GameSystem, ISaveableSpecial
     
     public void UpdateTextureFromPlayerMovement(SpaceObject playerObj = null)
     {
-        if(playerObj is null) 
-            playerObj = A.Player;
-        Printer.Warn($"Played moved to {playerObj.Parent}, recalculating FogOfWar");
-        if (A.HyperspaceLocation == playerObj.Parent)
+        if(playerObj is null)
         {
-            return;
+            playerObj = A.Player;
+        }
+        
+        if (S.Universe.Hyperspace == playerObj.Parent)
+        {
+            Printer.Warn($"Played tried updating his location while in hyperspace, trying to fallback...");
+            playerObj = A.HyperspaceLocation;
         }
 
         SpaceRegion playerRegion;
@@ -176,56 +235,49 @@ public class FogOfWarSys : GameSystem, ISaveableSpecial
         {
             playerRegion = (SpaceRegion)playerObj.Parent.Parent.SpaceEntity;
         }
-        
-        List<Vector4> circles = new List<Vector4>();
-        if (TryGetUvCoordinatesFromRegionOntoFog(playerRegion.SO.UI, out var uv))
+
+        if (DiscoveredRegions.TryGetValue(playerRegion.SO, out var playerState))
         {
-            circles.Add(new Vector4(uv.x, uv.y, 0.01f, 0));
-            playerRegion.SO.UI.GetCanvasGroup().alpha = 1f;
+            DiscoveredRegions[playerRegion.SO] = DiscoverState.FullyDiscovered;
         }
-        
-        RevealedObjects.Add(playerRegion.SO);
-        
-        
+        else
+        {
+            DiscoveredRegions.Add(playerRegion.SO, DiscoverState.FullyDiscovered);
+        }
+
         foreach (var link in playerRegion.Links)
         {
-            Printer.Warn(link);
-
-            UISpaceObject child;
+            SpaceObject child;
             if (link.To == playerRegion)
             {
-                child = link.From.SO.UI;
+                child = link.From.SO;
             }
             else
             {
-                child = link.To.SO.UI;
+                child = link.To.SO;
             }
-            if (TryGetUvCoordinatesFromRegionOntoFog(child, out var childUv))
+            if (DiscoveredRegions.TryGetValue(child, out var childState))
             {
-                RevealedObjects.Add(child.SpaceObject);
-                circles.Add(new Vector4(childUv.x, childUv.y, 0.005f, 0));
-                child.GetCanvasGroup().alpha = 1f;
+                if (childState < DiscoverState.SomewhatDiscovered)
+                {
+                    DiscoveredRegions[child] = childState;
+                }
             }
             else
             {
-                Printer.Error($"Failed to get texture coordinate for {child} with uv pos {childUv}");
+                DiscoveredRegions.Add(child, DiscoverState.SomewhatDiscovered);
             }
         }
-
-        var regions = GetAllRegionsWithUIObjects();
         
-        foreach (var region in regions.Where(x => !RevealedObjects.Contains(x.SpaceObject)))
-        {
-            region.GetCanvasGroup().alpha = 0f;
-        }
-        
-        UpdateTexture(circles);
+        if(FogOfWarObject is not null)
+            UpdateTexture();
     }
 
     private bool TryGetUvCoordinatesFromRegionOntoFog(UISpaceObject region, out Vector2 result)
     {
         if (region is null)
         {
+            Printer.Warn($"Passing a null region, cannot find uv!");
             result = Vector2.zero;
             return false;
         }
@@ -237,5 +289,30 @@ public class FogOfWarSys : GameSystem, ISaveableSpecial
         Vector2 bottomLeft = (Vector2)posInFog + Vector2.Scale(size, pivot);
         result = new Vector2(bottomLeft.x / size.x, bottomLeft.y / size.y);
         return true;
+    }
+
+    private static float GetCircleSizeForDiscoverState(DiscoverState state)
+    {
+        switch (state)
+        {
+            case DiscoverState.None : return 0f;
+            case DiscoverState.BarelyDiscovered : return 0.002f;
+            case DiscoverState.SomewhatDiscovered : return 0.005f;
+            case DiscoverState.FullyDiscovered : return 0.01f;
+            case DiscoverState.StartingArea : return 0.025f;
+            case DiscoverState.Debug : return 1f;
+        }
+
+        throw new ArgumentOutOfRangeException();
+    }
+
+    public void Reset()
+    {
+        Toggle(false);
+        DiscoveredRegions.Clear();
+        Mask = new RenderTexture(4000, 4000, 0, RenderTextureFormat.ARGB32);
+        var image = FogOfWarObject.GetComponent<RawImage>();
+        image.texture = Mask;
+        UpdateTextureFromPlayerMovement();
     }
 }

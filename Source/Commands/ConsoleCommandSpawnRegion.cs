@@ -21,7 +21,7 @@ public class ConsoleCommandSpawnRegion : ConsoleCommand
 
         var x = args.GetInt(1);
         var y = args.GetInt(2);
-        ChunkSys.GenerateChunkAt(new Vector2Int(x, y));
+        ChunkSys.Instance.GenerateChunkAt(new Vector2Int(x, y));
         return OK();
     }
 

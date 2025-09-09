@@ -24,12 +24,12 @@ public static class SectorHelper
     private static readonly MethodInfo CreateSectorFor = AccessTools.Method(typeof(GenSpace), "CreateSectorsFor");
     private static GenSpace Gen = new GenSpace(A.S, A.S.Seed);
     private static readonly Vector2 RegionSize = new Vector2(15f, 15f);
-    public static void GenerateSectorForRegion(SpaceRegion region)
+    public static void GenerateSectorForRegion(SpaceRegion region, Rng rng)
     {
         region.Sectors = new List<SpaceSector>();
             
-        int currentId = (int)CreateSectorFor.Invoke(Gen, new object[] { ChunkSys.NextSpaceObjectId, region, Rng.Unseeded, new HashSet<int>() });
-        ChunkSys.UpdateId(currentId);
+        int currentId = (int)CreateSectorFor.Invoke(Gen, new object[] { ChunkSys.Instance.NextSpaceObjectId, region, Rng.Unseeded, new HashSet<int>() });
+        ChunkSys.Instance.UpdateId(currentId);
         
         foreach (var sector in region.Sectors)
         {
@@ -40,6 +40,8 @@ public static class SectorHelper
             sector.SO.Location = sector.Position;
             region.SO.AddChild(sector.SO);
         }
+        
+        ChunkSys.Instance.GenSpace.GenerateLinksForSector(region.Name, rng, region.Sectors, new HashSet<SpaceLink>(), 2, 4);
     }
 
     public static void GenerateSectorsForRegionSpecific(SpaceRegion region, int amount, Rng rng)
@@ -64,7 +66,7 @@ public static class SectorHelper
         {
             SpaceSector spaceSector = new SpaceSector();
             spaceSector.Seed = rng.Int;
-            spaceSector.Id = ChunkSys.NextSpaceObjectId;
+            spaceSector.Id = ChunkSys.Instance.NextSpaceObjectId;
             spaceSector.Region = region;
             spaceSector.Position = list[i] - RegionSize * 0.5f;
             spaceSector.Biome = new SpaceBiome();
@@ -81,6 +83,8 @@ public static class SectorHelper
             spaceSector.SO.Location = spaceSector.Position;
             region.SO.AddChild(spaceSector.SO);
         }
+        
+        ChunkSys.Instance.GenSpace.GenerateLinksForSector(region.Name, rng, region.Sectors, new HashSet<SpaceLink>(), 2, 4);
     }
     
     public static void GenerateBiomesForSector(SpaceRegion region, Rng rng)

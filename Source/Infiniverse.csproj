@@ -100,6 +100,7 @@
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
       <HintPath>G:\Steam\steamapps\common\Stardeus\Stardeus_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>G:\Steam\steamapps\common\Stardeus\Stardeus_Data\Managed\UnityEngine.UI.dll</HintPath>
@@ -107,9 +108,11 @@
     </Reference>
     <Reference Include="UnityEngine.UIElementsModule">
       <HintPath>G:\Steam\steamapps\common\Stardeus\Stardeus_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
       <HintPath>G:\Steam\steamapps\common\Stardeus\Stardeus_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="websocket-sharp">
       <HintPath>G:\Steam\steamapps\common\Stardeus\Stardeus_Data\Managed\websocket-sharp.dll</HintPath>
@@ -117,10 +120,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\ConsoleCommandChangeUniverseSize.cs" />
-    <Compile Include="Commands\ConsoleCommandDebufFillChunks.cs" />
+    <Compile Include="Commands\ConsoleCommandResetFog.cs" />
+    <Compile Include="Commands\ConsoleCommandRevealAll.cs" />
     <Compile Include="Commands\ConsoleCommandSpawnRegion.cs" />
-    <Compile Include="Commands\ConsoleCommandToggleFog.cs" />
     <Compile Include="Config\ConfigDataInfiniverse.cs" />
     <Compile Include="Config\ModConfigsInfiniverse.cs" />
     <Compile Include="Data\Biomes\ChunkBiome.cs" />
@@ -128,8 +130,10 @@
     <Compile Include="Data\Biomes\StandardBiome.cs" />
     <Compile Include="Data\Chunks\Chunk.cs" />
     <Compile Include="Data\Direction.cs" />
+    <Compile Include="Data\Saveable\ChunkData.cs" />
     <Compile Include="Extensions\DetailBlockStarmapWidgetExtensions.cs" />
     <Compile Include="Extensions\GenSpaceBiomeExtensions.cs" />
+    <Compile Include="Extensions\GenSpaceExtensions.cs" />
     <Compile Include="Extensions\SpaceObjectExtensions.cs" />
     <Compile Include="Extensions\SpaceRegionExtensions.cs" />
     <Compile Include="Extensions\UIScrollNavExtensions.cs" />

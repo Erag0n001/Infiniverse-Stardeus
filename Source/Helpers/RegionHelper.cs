@@ -57,7 +57,7 @@ public static class RegionHelper
         GenerateRegionSO(region);
         if (withSectors)
         {
-            SectorHelper.GenerateSectorForRegion(region);
+            SectorHelper.GenerateSectorForRegion(region, rng.Fork());
         }
         
         return region;
@@ -108,9 +108,9 @@ public static class RegionHelper
     public static SpaceRegion GenerateRegion(Vector2 position, Rng rng)
     {
         SpaceRegion region = new SpaceRegion();
-        region.Id = ChunkSys.NextSpaceObjectId;
+        region.Id = ChunkSys.Instance.NextSpaceObjectId;
         region.Seed = (int)A.S.Rng.Uint;
-        NameResult nameResult = A.S.Query.GenerateNameExcept.Ask(NameRequest.ForSpaceMap(SpaceMapObjectType.Region, rng), ChunkSys.UsedRegionNames);
+        NameResult nameResult = A.S.Query.GenerateNameExcept.Ask(NameRequest.ForSpaceMap(SpaceMapObjectType.Region, rng), ChunkSys.Instance.UsedRegionNames);
         region.Name = nameResult.Name;
         region.Position = position;
         region.Map = A.S.Query.GetSpaceMap.Ask();
